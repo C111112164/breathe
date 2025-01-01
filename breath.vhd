@@ -18,21 +18,21 @@ entity pwm_breath is
 end pwm_breath;
 architecture Behavioral of pwm_breath is
 signal           sw  : STD_LOGIC_VECTOR(1 downto 0);
-signal   n_cycle_PWM : integer range 0 to 5000;
-constant   default_n : integer := 2000;  -- default n pwm cycles
-constant n_MIN_cycle : integer := 500;   -- min n pwm cycles
-constant n_MAX_cycle : integer := 5000; -- max n pwm cycles
-constant       det_n : integer := 500;   -- delta n pwm cycles, one scale of n
+signal   n_cycle_PWM : integer range 0 to 2500;
+constant   default_n : integer := 1000;  -- default n pwm cycles
+constant n_MIN_cycle : integer := 250;   -- min n pwm cycles
+constant n_MAX_cycle : integer := 2500; -- max n pwm cycles
+constant       det_n : integer := 250;   -- delta n pwm cycles, one scale of n
 signal brighter_darker : std_logic;
 signal n_cycle_PWM_complete: std_logic;
 signal prev_pwm_state: std_logic;
 signal pwm_state: std_logic;
-signal pwm_count: integer range 0 to 5000;
+signal pwm_count: integer range 0 to 2500;
 signal upbnd1: integer range 0 to 255;
 signal upbnd2: integer range 0 to 255;
 signal count1: integer range 0 to 255;
 signal count2: integer range 0 to 255;
-signal divclk:STD_LOGIC_VECTOR(26 downto 0);
+signal divclock:STD_LOGIC_VECTOR(26 downto 0);
 signal fclk:STD_LOGIC;
 begin
 --呼吸頻率調整 breath frequency adaption, BFA
@@ -47,12 +47,12 @@ sw <= i_sw_up & i_sw_dn;
 fd:process(i_clk ,i_rst)
 begin
 if (i_rst = '0') then 
-    divclk <= (others => '0');
+    divclock <= (others => '0');
 elsif (rising_edge(i_clk)) then
-    divclk <= divclk +1 ;
+    divclock <= divclock +1 ;
 end if;
 end process fd;
-fclk <= divclk(25);      
+fclk <= divclock(25);      
 
 
 BFA:process(fclk, i_rst, i_sw_up, i_sw_dn)
